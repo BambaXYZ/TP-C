@@ -1,40 +1,20 @@
 @startuml diagramme_sequence
-title II.a) Diagramme de séquence - Réservation sur le vol AF4032 par le passager S.
+title II.a) Diagramme de séquence - Réservation du vol AF4032 par S.
 autonumber
-actor "S : Passager" as S
-participant "FRAM : AgenceVoyage" as FRAM
-participant "AF : CompagnieAerienne" as AF
-participant "AF4032 : Vol" as V
-participant "r : Reservation" as R
+actor "S." as S
+participant "FRAM" as FRAM
+participant "Compagnie" as AF
+participant "AF4032" as V
 
-== Temps 1 : enregistrement ==
-S -> FRAM : demanderReservation(AF4032)
-activate FRAM
-FRAM -> AF : enregistrerReservation(S, AF4032)
-activate AF
-AF -> V : verifierDisponibilite()
-activate V
-V --> AF : placesDisponibles = vrai
-deactivate V
-AF -> R ** : <<create>> (S, AF4032)
-note right of R : etat = EN_ATTENTE_CONFIRMATION
-AF --> FRAM : r
-deactivate AF
-FRAM --> S : réservation enregistrée,\nattente de confirmation
-deactivate FRAM
-
-== Temps 2 : confirmation ==
-S -> FRAM : confirmer(r)
-activate FRAM
-FRAM -> R : confirmer()
-activate R
-R -> V : attribuerPlace()
-activate V
-V --> R : numeroPlace
-deactivate V
-note right of R : etat = CONFIRMEE
-R --> FRAM : ok
-deactivate R
-FRAM --> S : billet (vol AF4032, place n°)
-deactivate FRAM
+S -> FRAM : demande de réservation AF4032
+FRAM -> AF : enregistrer réservation
+AF -> V : vérifier disponibilité
+V --> AF : places disponibles
+AF --> FRAM : réservation enregistrée
+FRAM --> S : demande de confirmation
+S -> FRAM : confirmation
+FRAM -> AF : confirmer réservation
+AF -> V : attribuer place
+AF --> FRAM : place attribuée
+FRAM --> S : billet
 @enduml

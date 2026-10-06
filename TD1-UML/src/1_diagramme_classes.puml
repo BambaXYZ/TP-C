@@ -1,90 +1,63 @@
 @startuml diagramme_classes
 !pragma layout smetana
-title I. Diagramme de classes - Système de réservation de vols
+title I. Diagramme de classes - Réservation de vols
 skinparam classAttributeIconSize 0
 hide empty members
+hide circle
 
-enum EtatReservation {
-  EN_ATTENTE_CONFIRMATION
-  LISTE_ATTENTE
-  CONFIRMEE
-  ANNULEE
+class "Compagnie aérienne" as Compagnie {
+  nom
+  --
+  ouvrir réservation
+  fermer réservation
 }
-
-class CompagnieAerienne {
-  - nom : String
-  + ouvrirReservation(v : Vol)
-  + fermerReservation(v : Vol)
-  + retarderVol(v : Vol, retard : Duree)
-}
-
 class Vol {
-  - numero : String
-  - dateDepart : Date
-  - dateArrivee : Date
-  - reservationOuverte : Boolean
-  - nbPlaces : Integer
-  + ouvrir()
-  + fermer()
-  + verifierDisponibilite() : Boolean
-  + attribuerPlace() : Integer
-  + libererPlace()
-  + retarder(retard : Duree)
+  numéro
+  date de départ
+  date d'arrivée
+  --
+  ouvrir
+  fermer
 }
-
 class Escale {
-  - heureArrivee : Heure
-  - heureDepart : Heure
+  heure d'arrivée
+  heure de départ
 }
-
-class Aeroport {
-  - code : String
-  - nom : String
+class "Aéroport" as Aeroport {
+  nom
 }
-
 class Ville {
-  - nom : String
+  nom
 }
-
-class AgenceVoyage {
-  - nom : String
-  + enregistrerReservation(c : Client, p : Passager, v : Vol) : Reservation
+class "Agence de voyage" as Agence {
+  nom
 }
-
 class Client {
-  - nom : String
-  - adresse : String
-  - telephone : String
+  nom
+  adresse
 }
-
 class Passager {
-  - nom : String
-  - prenom : String
-  - classe : String
-  + avertir(message : String)
+  nom
+}
+class "Réservation" as Reservation {
+  numéro
+  date
+  état
+  --
+  confirmer
+  annuler
 }
 
-class Reservation {
-  - numero : String
-  - dateReservation : Date
-  - numeroPlace : Integer
-  - etat : EtatReservation
-  + confirmer()
-  + annuler()
-  + notifierRetard()
-}
-
-CompagnieAerienne "1" -- "1..*" Vol : propose >
-CompagnieAerienne "1" -- "0..*" Reservation : gère (système de réservation) >
-Vol "0..*" -- "1" Aeroport : départ >
-Vol "0..*" -- "1" Aeroport : arrivée >
-Vol "1" *-- "0..*" Escale : comporte >
-Escale "0..*" -- "1" Aeroport : a lieu à >
-Aeroport "1..*" -- "1..*" Ville : dessert >
-AgenceVoyage "1" -- "0..*" Reservation : enregistre >
-AgenceVoyage "1" -- "0..*" Client : a pour clients >
-Client "1" -- "0..*" Reservation : effectue >
-Reservation "0..*" -- "1" Vol : concerne >
-Reservation "0..*" -- "1" Passager : pour >
-Reservation ..> EtatReservation
+Compagnie "1" -- "1..*" Vol : propose
+Compagnie "1" -- "*" Reservation : gère
+Vol "*" -- "1" Aeroport : départ
+Vol "*" -- "1" Aeroport : arrivée
+Vol "1" -- "*" Escale : comporte
+Escale "*" -- "1" Aeroport
+Aeroport "*" -- "1..*" Ville : dessert
+Agence "1" -- "*" Reservation : enregistre
+Agence "1" -- "*" Client
+Client "1" -- "*" Reservation : effectue
+Reservation "*" -- "1" Vol : concerne
+Reservation "*" -- "1" Passager : pour
 @enduml

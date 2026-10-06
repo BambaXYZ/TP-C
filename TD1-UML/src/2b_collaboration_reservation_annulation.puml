@@ -1,18 +1,18 @@
 @startuml collaboration_b
 !pragma layout smetana
 allowmixing
-title II.b) Diagramme de collaboration - Réservation puis annulation d'une place
+title II.b) Diagramme de collaboration - Réservation puis annulation
 left to right direction
-actor "S : Passager" as S
-object "FRAM : AgenceVoyage" as FRAM
-object "AF : CompagnieAerienne" as AF
-object "AF4032 : Vol" as V
-object "r : Reservation" as R
+actor "S." as S
+object "FRAM" as FRAM
+object "Compagnie" as AF
+object "AF4032" as V
+object "Réservation de S." as R
 
-S -- FRAM : "1: demanderReservation(AF4032) →\n2: confirmer(r) →\n3: annuler(r) →"
-FRAM -- AF : "1.1: enregistrerReservation(S, AF4032) →"
-AF -- V : "1.1.1: verifierDisponibilite() →"
-AF -- R : "1.1.2: <<create>> →"
-FRAM -- R : "2.1: confirmer() →\n3.1: annuler() →"
-R -- V : "2.1.1: attribuerPlace() →\n3.1.1: libererPlace() →"
+S -- FRAM : "1: réserver →\n3: confirmer →\n5: annuler →"
+FRAM -- AF : "2: enregistrer →\n6: annuler →"
+AF -- V : "2.1: vérifier disponibilité →"
+AF -- R : "2.2: créer →\n6.1: annuler →"
+FRAM -- R : "4: confirmer →"
+R -- V : "4.1: attribuer place →\n6.2: libérer place →"
 @enduml

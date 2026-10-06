@@ -1,0 +1,90 @@
+@startuml diagramme_classes
+!pragma layout smetana
+title I. Diagramme de classes - Système de réservation de vols
+skinparam classAttributeIconSize 0
+hide empty members
+
+enum EtatReservation {
+  EN_ATTENTE_CONFIRMATION
+  LISTE_ATTENTE
+  CONFIRMEE
+  ANNULEE
+}
+
+class CompagnieAerienne {
+  - nom : String
+  + ouvrirReservation(v : Vol)
+  + fermerReservation(v : Vol)
+  + retarderVol(v : Vol, retard : Duree)
+}
+
+class Vol {
+  - numero : String
+  - dateDepart : Date
+  - dateArrivee : Date
+  - reservationOuverte : Boolean
+  - nbPlaces : Integer
+  + ouvrir()
+  + fermer()
+  + verifierDisponibilite() : Boolean
+  + attribuerPlace() : Integer
+  + libererPlace()
+  + retarder(retard : Duree)
+}
+
+class Escale {
+  - heureArrivee : Heure
+  - heureDepart : Heure
+}
+
+class Aeroport {
+  - code : String
+  - nom : String
+}
+
+class Ville {
+  - nom : String
+}
+
+class AgenceVoyage {
+  - nom : String
+  + enregistrerReservation(c : Client, p : Passager, v : Vol) : Reservation
+}
+
+class Client {
+  - nom : String
+  - adresse : String
+  - telephone : String
+}
+
+class Passager {
+  - nom : String
+  - prenom : String
+  - classe : String
+  + avertir(message : String)
+}
+
+class Reservation {
+  - numero : String
+  - dateReservation : Date
+  - numeroPlace : Integer
+  - etat : EtatReservation
+  + confirmer()
+  + annuler()
+  + notifierRetard()
+}
+
+CompagnieAerienne "1" -- "1..*" Vol : propose >
+CompagnieAerienne "1" -- "0..*" Reservation : gère (système de réservation) >
+Vol "0..*" -- "1" Aeroport : départ >
+Vol "0..*" -- "1" Aeroport : arrivée >
+Vol "1" *-- "0..*" Escale : comporte >
+Escale "0..*" -- "1" Aeroport : a lieu à >
+Aeroport "1..*" -- "1..*" Ville : dessert >
+AgenceVoyage "1" -- "0..*" Reservation : enregistre >
+AgenceVoyage "1" -- "0..*" Client : a pour clients >
+Client "1" -- "0..*" Reservation : effectue >
+Reservation "0..*" -- "1" Vol : concerne >
+Reservation "0..*" -- "1" Passager : pour >
+Reservation ..> EtatReservation
+@enduml

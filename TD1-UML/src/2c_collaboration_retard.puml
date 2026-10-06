@@ -1,0 +1,24 @@
+@startuml collaboration_c
+!pragma layout smetana
+allowmixing
+title II.c) Diagramme de collaboration - Retard du vol AF4032, annulation de S. et confirmation de L.
+left to right direction
+object "AF : CompagnieAerienne" as AF
+object "AF4032 : Vol" as V
+object "rS : Reservation" as RS {
+  etat = CONFIRMEE → ANNULEE
+}
+object "rL : Reservation" as RL {
+  etat = LISTE_ATTENTE → CONFIRMEE
+}
+actor "S : Passager\n(classe affaires)" as S
+actor "L : Passager" as L
+
+AF -- V : "1: retarder(retard) →"
+V -- RS : "1.1: notifierRetard() →\n2.1.1: libererPlace() ←"
+RS -- S : "1.1.1: avertir(retard) →"
+S -- AF : "← 2: demanderAnnulation(rS)"
+AF -- RS : "2.1: annuler() →"
+V -- RL : "2.1.2: confirmer() →"
+RL -- L : "2.1.2.1: avertir(confirmation) →"
+@enduml

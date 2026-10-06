@@ -1,0 +1,44 @@
+@startuml cas_utilisation
+!pragma layout smetana
+title IV. Diagramme des cas d'utilisation - Système de réservation de vols
+left to right direction
+
+actor Client
+actor "Agent de l'agence" as Agent
+actor Passager
+actor "Compagnie aérienne" as Compagnie
+
+rectangle "Système de réservation de vols" {
+  usecase "Consulter les vols" as UC1
+  usecase "Réserver un vol" as UC2
+  usecase "Vérifier la disponibilité\ndes places" as UC3
+  usecase "Confirmer une réservation" as UC4
+  usecase "Annuler une réservation" as UC5
+  usecase "Gérer la liste d'attente" as UC6
+  usecase "Informer le passager\n(retard, confirmation)" as UC7
+  usecase "Ouvrir / fermer la\nréservation d'un vol" as UC8
+  usecase "Gérer les vols\n(aéroports, escales, dates)" as UC9
+  usecase "Signaler un retard" as UC10
+  usecase "Enregistrer un client" as UC11
+}
+
+Client -- UC1
+Client -- UC2
+Client -- UC4
+Client -- UC5
+Agent -- UC2
+Agent -- UC11
+Agent -- UC4
+Agent -- UC5
+UC7 -- Passager
+Compagnie -- UC8
+Compagnie -- UC9
+Compagnie -- UC10
+Compagnie -- UC6
+
+UC2 ..> UC3 : <<include>>
+UC2 <.. UC6 : <<extend>>\n[vol complet]
+UC5 ..> UC6 : <<include>>
+UC10 ..> UC7 : <<include>>
+UC6 <.. UC7 : <<extend>>
+@enduml

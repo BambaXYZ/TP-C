@@ -1,0 +1,30 @@
+@startuml automate_reservation
+!pragma layout smetana
+title III. Automate (diagramme d'états-transitions) de la classe Reservation
+
+[*] --> Verification : demande de réservation
+
+state Verification <<choice>>
+Verification --> EnAttenteConfirmation : [place disponible] / enregistrer
+Verification --> ListeAttente : [vol complet] / inscrire en liste d'attente
+
+state "En attente de confirmation" as EnAttenteConfirmation
+state "En liste d'attente" as ListeAttente
+state "Confirmée" as Confirmee {
+  Confirmee : entry / attribuerPlace()
+}
+state "Annulée" as Annulee {
+  Annulee : entry / libérer la place éventuelle
+}
+
+ListeAttente --> EnAttenteConfirmation : place libérée
+EnAttenteConfirmation --> Confirmee : confirmation de la réservation
+ListeAttente --> Annulee : annulation de la réservation
+EnAttenteConfirmation --> Annulee : annulation de la réservation
+Confirmee --> Annulee : annulation de la réservation / libererPlace()
+EnAttenteConfirmation --> Annulee : fermeture des réservations du vol
+ListeAttente --> Annulee : fermeture des réservations du vol
+
+Annulee --> [*]
+Confirmee --> [*] : vol effectué
+@enduml
